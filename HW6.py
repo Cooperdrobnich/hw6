@@ -117,8 +117,16 @@ def sort_collectionid (CACHE_FNAME):
         id = collections[i]['collectionId']
         lst.append(id)
     x = sorted(lst)[0]
-    print(x)
-        
+
+    dic = dict(sorted(collections.items(), key=lambda t: t[0]))
+    for i in dic:
+        if dic[i]['collectionId'] == x:
+            price = dic[i]['collectionPrice']
+    return price
+
+    
+    
+
     
     
     
