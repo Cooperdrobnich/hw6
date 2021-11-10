@@ -4,8 +4,8 @@ import os
 import requests
 
 #
-# Your name:
-# Who you worked with:
+# Your name: Cooper Drobnich
+# Who you worked with: Adam Brenner
 #
 
 # generating personal API key is not requested here
@@ -35,9 +35,15 @@ def write_cache(CACHE_FNAME, CACHE_DICT):
     {'resultCount': 2, 'results': [{*INFORMATION ABOUT EACH ITEM*},{*INFORMATION ABOUT EACH ITEM*}]}
 
     In the above case, the resultCount is 2 because we set the limit number to be 2. For this assignment, we set resultCount to be 1. 
+"""
+    with open(CACHE_FNAME, "w") as file:
 
-    """
-    pass
+        json.dump(CACHE_DICT, file)
+
+    
+
+    
+    
     
 
 
@@ -50,10 +56,11 @@ def create_request_url(term, number=1):
     See more details in the instructions file.
 
     """
+    base = 'https://itunes.apple.com/search?term={}&limit={}'
+    request_url = base.format(term, number)
+    return request_url
     
-    pass
-    
-def get_data_with_caching(term, CACHE_FNAME):
+def get_data_with_caching(term, CACHE_FNAME): 
     """
     This function uses the passed term (e.g., Billie+Eilish) to first generate a request_url (using the create_request_url function).
     It then checks if this url is in the dictionary returned by the function read_cache.
@@ -72,8 +79,30 @@ def get_data_with_caching(term, CACHE_FNAME):
     If there was an exception during the search (for reasons such as no network connection, no results are returned), 
     it should print out “Exception” and return None.
     """
-    pass
     
+    request_url = create_request_url(term, 1)
+    dic = read_cache(CACHE_FNAME)
+    if request_url in dic:
+        print(f"Using cache for {term} ")
+        return dic
+    else:
+        print(f"Fetching data for {term}")
+        r = requests.get(request_url).text
+        new_dic = json.loads(r)
+        try:
+            dic[request_url] = new_dic['results'][0]
+            write_cache(CACHE_FNAME, dic)
+            if len(dic['results']) != 1:
+                print("Request not set correctly")
+                return None
+        except:
+            print("Exception")
+            return None
+
+        
+
+
+
 
 
 def sort_collectionid (CACHE_FNAME):
@@ -82,7 +111,16 @@ def sort_collectionid (CACHE_FNAME):
      returns the collection price for the item with the smallest collectionId.
 
     """
-    pass
+    collections = read_cache(CACHE_FNAME)
+    lst = []
+    for i in collections:
+        id = collections[i]['collectionId']
+        lst.append(id)
+    x = sorted(lst)[0]
+    print(x)
+        
+    
+    
     
     
         
@@ -145,14 +183,14 @@ class TestHomework6(unittest.TestCase):
         self.assertEqual(sort_collectionid(self.CACHE_FNAME), 3.99)
         
 
-
+'''
     ######## EXTRA CREDIT #########
     # Keep this commented out if you do not attempt the extra credit
     # Writing test case for the extra credit is not required but highly recommended.
     def test_itunes_list(self):
         pass 
 
-
+'''
 
 def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -189,11 +227,11 @@ def main():
 
     # Extra Credit
     # Keep the statements commented out if you do not attempt the extra credit
-    print("EXTRA CREDIT!")
-    print("Analyzing the distribution of item genres")
+    #print("EXTRA CREDIT!")
+    #print("Analyzing the distribution of item genres")
     # itunes_list() function does not take any parameters.
-    print(itunes_list())
-    print("________________________")
+    #print(itunes_list())
+    #print("________________________")
     
  
 if __name__ == "__main__":
