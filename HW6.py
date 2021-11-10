@@ -191,10 +191,11 @@ class TestHomework6(unittest.TestCase):
         self.assertEqual(sort_collectionid(self.CACHE_FNAME), 3.99)
         
 
-'''
+
     ######## EXTRA CREDIT #########
     # Keep this commented out if you do not attempt the extra credit
     # Writing test case for the extra credit is not required but highly recommended.
+'''  
     def test_itunes_list(self):
         pass 
 
